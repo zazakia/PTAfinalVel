@@ -23,19 +23,35 @@ export const ReportsMain: React.FC<ReportsMainProps> = ({
   const [typeFilter, setTypeFilter] = useState('all');
 
   const filteredIncomeTransactions = incomeTransactions.filter(t => {
-    const dateMatch = dateFilter === 'all' || 
-      (dateFilter === 'today' && t.date.toDateString() === new Date().toDateString()) ||
-      (dateFilter === 'week' && t.date > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)) ||
-      (dateFilter === 'month' && t.date > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
-    return dateMatch;
+    try {
+      const transactionDate = new Date(t.date);
+      if (isNaN(transactionDate.getTime())) return dateFilter === 'all';
+      
+      const dateMatch = dateFilter === 'all' || 
+        (dateFilter === 'today' && transactionDate.toDateString() === new Date().toDateString()) ||
+        (dateFilter === 'week' && transactionDate > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)) ||
+        (dateFilter === 'month' && transactionDate > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
+      return dateMatch;
+    } catch (error) {
+      console.warn('Invalid date in income transaction:', t.date);
+      return dateFilter === 'all';
+    }
   });
 
   const filteredExpenseTransactions = expenseTransactions.filter(t => {
-    const dateMatch = dateFilter === 'all' || 
-      (dateFilter === 'today' && t.date.toDateString() === new Date().toDateString()) ||
-      (dateFilter === 'week' && t.date > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)) ||
-      (dateFilter === 'month' && t.date > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
-    return dateMatch;
+    try {
+      const transactionDate = new Date(t.date);
+      if (isNaN(transactionDate.getTime())) return dateFilter === 'all';
+      
+      const dateMatch = dateFilter === 'all' || 
+        (dateFilter === 'today' && transactionDate.toDateString() === new Date().toDateString()) ||
+        (dateFilter === 'week' && transactionDate > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)) ||
+        (dateFilter === 'month' && transactionDate > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
+      return dateMatch;
+    } catch (error) {
+      console.warn('Invalid date in expense transaction:', t.date);
+      return dateFilter === 'all';
+    }
   });
 
   const totalIncome = filteredIncomeTransactions.reduce((sum, t) => sum + t.total, 0);
@@ -52,6 +68,17 @@ export const ReportsMain: React.FC<ReportsMainProps> = ({
       const student = students.find(s => s.id === id);
       return student ? `${student.firstName} ${student.lastName}` : 'Unknown';
     });
+  };
+
+  const formatDate = (date: Date | string) => {
+    try {
+      const dateObj = new Date(date);
+      if (isNaN(dateObj.getTime())) return 'Invalid Date';
+      return dateObj.toLocaleDateString();
+    } catch (error) {
+      console.warn('Error formatting date:', date);
+      return 'Invalid Date';
+    }
   };
 
   const displayTransactions = typeFilter === 'expenses' ? [] : filteredIncomeTransactions;
@@ -160,7 +187,7 @@ export const ReportsMain: React.FC<ReportsMainProps> = ({
                   <div>
                     <h4 className="font-semibold">{getParentName(transaction.parentId)}</h4>
                     <p className="text-sm text-muted-foreground">
-                      {transaction.date.toLocaleDateString()} - {transaction.loggedUser}
+                      {formatDate(transaction.date)} - {transaction.loggedUser}
                     </p>
                   </div>
                   <Badge variant="secondary" className="bg-green-100 text-green-800">
@@ -203,7 +230,7 @@ export const ReportsMain: React.FC<ReportsMainProps> = ({
                   <div>
                     <h4 className="font-semibold">Expense</h4>
                     <p className="text-sm text-muted-foreground">
-                      {expense.date.toLocaleDateString()} - {expense.loggedUser}
+                      {formatDate(expense.date)} - {expense.loggedUser}
                     </p>
                   </div>
                   <Badge variant="secondary" className="bg-red-100 text-red-800">

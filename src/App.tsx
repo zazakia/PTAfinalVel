@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import { ResponsiveLayout } from '@/components/Layout/ResponsiveLayout';
@@ -15,6 +15,20 @@ import { TeachersData } from '@/components/Data/TeachersData';
 import { ItemsData } from '@/components/Data/ItemsData';
 import { UsersData } from '@/components/Data/UsersData';
 import { Student, Parent, IncomeItem, IncomeTransaction, ExpenseTransaction, CostCenter, Teacher, Section, User, Role } from '@/types';
+// Database services will be imported conditionally to avoid browser errors
+let dbServices: any = null;
+
+// Only import database services in server environment
+const loadDbServices = async () => {
+  if (typeof window === 'undefined') {
+    // Server-side - safe to import
+    const services = await import('@/lib/db/services');
+    return services;
+  } else {
+    // Client-side - return null, will use localStorage fallback
+    return null;
+  }
+};
 import './App.css';
 
 // Sample data
@@ -71,111 +85,260 @@ const sampleUsers: User[] = [
 
 function App() {
   const [currentPage, setCurrentPage] = useState('menu');
-  const [parents, setParents] = useState<Parent[]>(sampleParents);
-  const [students, setStudents] = useState<Student[]>(sampleStudents);
-  const [incomeItems, setIncomeItems] = useState<IncomeItem[]>(sampleIncomeItems);
+  const [parents, setParents] = useState<Parent[]>([]);
+  const [students, setStudents] = useState<Student[]>([]);
+  const [incomeItems, setIncomeItems] = useState<IncomeItem[]>([]);
   const [incomeTransactions, setIncomeTransactions] = useState<IncomeTransaction[]>([]);
   const [expenseTransactions, setExpenseTransactions] = useState<ExpenseTransaction[]>([]);
-  const [costCenters, setCostCenters] = useState<CostCenter[]>(sampleCostCenters);
-  const [teachers, setTeachers] = useState<Teacher[]>(sampleTeachers);
-  const [sections, setSections] = useState<Section[]>(sampleSections);
-  const [users, setUsers] = useState<User[]>(sampleUsers);
-  const [roles, setRoles] = useState<Role[]>(sampleRoles);
+  const [costCenters, setCostCenters] = useState<CostCenter[]>([]);
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
+  const [sections, setSections] = useState<Section[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [roles, setRoles] = useState<Role[]>([]);
+
+  // Load data from localStorage and potentially database
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        // Load from localStorage first
+        const storedParents = localStorage.getItem('parents');
+        const storedStudents = localStorage.getItem('students');
+        const storedIncomeItems = localStorage.getItem('incomeItems');
+        const storedIncomeTransactions = localStorage.getItem('incomeTransactions');
+        const storedCostCenters = localStorage.getItem('costCenters');
+        const storedTeachers = localStorage.getItem('teachers');
+        const storedSections = localStorage.getItem('sections');
+        const storedUsers = localStorage.getItem('users');
+        const storedRoles = localStorage.getItem('roles');
+
+        if (storedParents) {
+          setParents(JSON.parse(storedParents));
+        } else {
+          setParents(sampleParents);
+          localStorage.setItem('parents', JSON.stringify(sampleParents));
+        }
+
+        if (storedStudents) {
+          setStudents(JSON.parse(storedStudents));
+        } else {
+          setStudents(sampleStudents);
+          localStorage.setItem('students', JSON.stringify(sampleStudents));
+        }
+
+        if (storedIncomeItems) {
+          setIncomeItems(JSON.parse(storedIncomeItems));
+        } else {
+          setIncomeItems(sampleIncomeItems);
+          localStorage.setItem('incomeItems', JSON.stringify(sampleIncomeItems));
+        }
+
+        if (storedIncomeTransactions) {
+          setIncomeTransactions(JSON.parse(storedIncomeTransactions));
+        }
+
+        if (storedCostCenters) {
+          setCostCenters(JSON.parse(storedCostCenters));
+        } else {
+          setCostCenters(sampleCostCenters);
+          localStorage.setItem('costCenters', JSON.stringify(sampleCostCenters));
+        }
+
+        if (storedTeachers) {
+          setTeachers(JSON.parse(storedTeachers));
+        } else {
+          setTeachers(sampleTeachers);
+          localStorage.setItem('teachers', JSON.stringify(sampleTeachers));
+        }
+
+        if (storedSections) {
+          setSections(JSON.parse(storedSections));
+        } else {
+          setSections(sampleSections);
+          localStorage.setItem('sections', JSON.stringify(sampleSections));
+        }
+
+        if (storedUsers) {
+          setUsers(JSON.parse(storedUsers));
+        } else {
+          setUsers(sampleUsers);
+          localStorage.setItem('users', JSON.stringify(sampleUsers));
+        }
+
+        if (storedRoles) {
+          setRoles(JSON.parse(storedRoles));
+        } else {
+          setRoles(sampleRoles);
+          localStorage.setItem('roles', JSON.stringify(sampleRoles));
+        }
+      } catch (error) {
+        console.error('Error loading data:', error);
+        // Fallback to sample data if everything fails
+        setParents(sampleParents);
+        setStudents(sampleStudents);
+        setIncomeItems(sampleIncomeItems);
+        setCostCenters(sampleCostCenters);
+        setTeachers(sampleTeachers);
+        setSections(sampleSections);
+        setUsers(sampleUsers);
+        setRoles(sampleRoles);
+      }
+    };
+
+    loadData();
+  }, []);
 
   const handleParentAdd = (parent: Parent) => {
-    setParents([...parents, parent]);
+    const newParent = { ...parent, id: Date.now().toString() };
+    const updatedParents = [...parents, newParent];
+    setParents(updatedParents);
+    localStorage.setItem('parents', JSON.stringify(updatedParents));
   };
 
   const handleStudentAdd = (student: Student) => {
-    setStudents([...students, student]);
+    const newStudent = { ...student, id: Date.now().toString() };
+    const updatedStudents = [...students, newStudent];
+    setStudents(updatedStudents);
+    localStorage.setItem('students', JSON.stringify(updatedStudents));
   };
 
   const handleStudentUpdate = (updatedStudent: Student) => {
-    setStudents(students.map(s => s.id === updatedStudent.id ? updatedStudent : s));
+    const updatedStudents = students.map(s => s.id === updatedStudent.id ? updatedStudent : s);
+    setStudents(updatedStudents);
+    localStorage.setItem('students', JSON.stringify(updatedStudents));
   };
 
   const handleStudentDelete = (studentId: string) => {
-    setStudents(students.filter(s => s.id !== studentId));
+    const updatedStudents = students.filter(s => s.id !== studentId);
+    setStudents(updatedStudents);
+    localStorage.setItem('students', JSON.stringify(updatedStudents));
   };
 
   const handleIncomeTransactionSave = (transaction: IncomeTransaction) => {
-    setIncomeTransactions([...incomeTransactions, transaction]);
+    const newTransaction = { ...transaction, id: Date.now().toString(), createdAt: new Date() };
+    const updatedTransactions = [...incomeTransactions, newTransaction];
+    setIncomeTransactions(updatedTransactions);
+    localStorage.setItem('incomeTransactions', JSON.stringify(updatedTransactions));
   };
 
   const handleExpenseTransactionSave = (transaction: ExpenseTransaction) => {
-    setExpenseTransactions([...expenseTransactions, transaction]);
+    const newTransaction = { ...transaction, id: Date.now().toString(), createdAt: new Date() };
+    const updatedTransactions = [...expenseTransactions, newTransaction];
+    setExpenseTransactions(updatedTransactions);
+    localStorage.setItem('expenseTransactions', JSON.stringify(updatedTransactions));
   };
 
   const handleCostCenterAdd = (costCenter: CostCenter) => {
-    setCostCenters([...costCenters, costCenter]);
+    const newCostCenter = { ...costCenter, id: Date.now().toString() };
+    const updatedCostCenters = [...costCenters, newCostCenter];
+    setCostCenters(updatedCostCenters);
+    localStorage.setItem('costCenters', JSON.stringify(updatedCostCenters));
   };
 
   const handleParentUpdate = (updatedParent: Parent) => {
-    setParents(parents.map(p => p.id === updatedParent.id ? updatedParent : p));
+    const updatedParents = parents.map(p => p.id === updatedParent.id ? updatedParent : p);
+    setParents(updatedParents);
+    localStorage.setItem('parents', JSON.stringify(updatedParents));
   };
 
   const handleParentDelete = (parentId: string) => {
-    setParents(parents.filter(p => p.id !== parentId));
+    const updatedParents = parents.filter(p => p.id !== parentId);
+    setParents(updatedParents);
+    localStorage.setItem('parents', JSON.stringify(updatedParents));
   };
 
   const handleIncomeItemAdd = (item: IncomeItem) => {
-    setIncomeItems([...incomeItems, item]);
+    const newItem = { ...item, id: Date.now().toString() };
+    const updatedItems = [...incomeItems, newItem];
+    setIncomeItems(updatedItems);
+    localStorage.setItem('incomeItems', JSON.stringify(updatedItems));
   };
 
   const handleIncomeItemUpdate = (updatedItem: IncomeItem) => {
-    setIncomeItems(incomeItems.map(i => i.id === updatedItem.id ? updatedItem : i));
+    const updatedItems = incomeItems.map(i => i.id === updatedItem.id ? updatedItem : i);
+    setIncomeItems(updatedItems);
+    localStorage.setItem('incomeItems', JSON.stringify(updatedItems));
   };
 
   const handleIncomeItemDelete = (itemId: string) => {
-    setIncomeItems(incomeItems.filter(i => i.id !== itemId));
+    const updatedItems = incomeItems.filter(i => i.id !== itemId);
+    setIncomeItems(updatedItems);
+    localStorage.setItem('incomeItems', JSON.stringify(updatedItems));
   };
 
   const handleTeacherAdd = (teacher: Teacher) => {
-    setTeachers([...teachers, teacher]);
+    const newTeacher = { ...teacher, id: Date.now().toString() };
+    const updatedTeachers = [...teachers, newTeacher];
+    setTeachers(updatedTeachers);
+    localStorage.setItem('teachers', JSON.stringify(updatedTeachers));
   };
 
   const handleTeacherUpdate = (updatedTeacher: Teacher) => {
-    setTeachers(teachers.map(t => t.id === updatedTeacher.id ? updatedTeacher : t));
+    const updatedTeachers = teachers.map(t => t.id === updatedTeacher.id ? updatedTeacher : t);
+    setTeachers(updatedTeachers);
+    localStorage.setItem('teachers', JSON.stringify(updatedTeachers));
   };
 
   const handleTeacherDelete = (teacherId: string) => {
-    setTeachers(teachers.filter(t => t.id !== teacherId));
+    const updatedTeachers = teachers.filter(t => t.id !== teacherId);
+    setTeachers(updatedTeachers);
+    localStorage.setItem('teachers', JSON.stringify(updatedTeachers));
   };
 
   const handleSectionAdd = (section: Section) => {
-    setSections([...sections, section]);
+    const newSection = { ...section, id: Date.now().toString() };
+    const updatedSections = [...sections, newSection];
+    setSections(updatedSections);
+    localStorage.setItem('sections', JSON.stringify(updatedSections));
   };
 
   const handleSectionUpdate = (updatedSection: Section) => {
-    setSections(sections.map(s => s.id === updatedSection.id ? updatedSection : s));
+    const updatedSections = sections.map(s => s.id === updatedSection.id ? updatedSection : s);
+    setSections(updatedSections);
+    localStorage.setItem('sections', JSON.stringify(updatedSections));
   };
 
   const handleSectionDelete = (sectionId: string) => {
-    setSections(sections.filter(s => s.id !== sectionId));
+    const updatedSections = sections.filter(s => s.id !== sectionId);
+    setSections(updatedSections);
+    localStorage.setItem('sections', JSON.stringify(updatedSections));
   };
 
   const handleUserAdd = (user: User) => {
-    setUsers([...users, user]);
+    const newUser = { ...user, id: Date.now().toString(), createdAt: new Date() };
+    const updatedUsers = [...users, newUser];
+    setUsers(updatedUsers);
+    localStorage.setItem('users', JSON.stringify(updatedUsers));
   };
 
   const handleUserUpdate = (updatedUser: User) => {
-    setUsers(users.map(u => u.id === updatedUser.id ? updatedUser : u));
+    const updatedUsers = users.map(u => u.id === updatedUser.id ? updatedUser : u);
+    setUsers(updatedUsers);
+    localStorage.setItem('users', JSON.stringify(updatedUsers));
   };
 
   const handleUserDelete = (userId: string) => {
-    setUsers(users.filter(u => u.id !== userId));
+    const updatedUsers = users.filter(u => u.id !== userId);
+    setUsers(updatedUsers);
+    localStorage.setItem('users', JSON.stringify(updatedUsers));
   };
 
   const handleRoleAdd = (role: Role) => {
-    setRoles([...roles, role]);
+    const newRole = { ...role, id: Date.now().toString(), createdAt: new Date() };
+    const updatedRoles = [...roles, newRole];
+    setRoles(updatedRoles);
+    localStorage.setItem('roles', JSON.stringify(updatedRoles));
   };
 
   const handleRoleUpdate = (updatedRole: Role) => {
-    setRoles(roles.map(r => r.id === updatedRole.id ? updatedRole : r));
+    const updatedRoles = roles.map(r => r.id === updatedRole.id ? updatedRole : r);
+    setRoles(updatedRoles);
+    localStorage.setItem('roles', JSON.stringify(updatedRoles));
   };
 
   const handleRoleDelete = (roleId: string) => {
-    setRoles(roles.filter(r => r.id !== roleId));
+    const updatedRoles = roles.filter(r => r.id !== roleId);
+    setRoles(updatedRoles);
+    localStorage.setItem('roles', JSON.stringify(updatedRoles));
   };
 
   const renderCurrentPage = () => {

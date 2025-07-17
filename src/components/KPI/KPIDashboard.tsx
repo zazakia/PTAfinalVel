@@ -24,15 +24,38 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
   const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0);
 
   const thisMonthIncome = incomeTransactions
-    .filter(t => t.date >= thisMonth)
+    .filter(t => {
+      try {
+        const transactionDate = new Date(t.date);
+        return !isNaN(transactionDate.getTime()) && transactionDate >= thisMonth;
+      } catch {
+        return false;
+      }
+    })
     .reduce((sum, t) => sum + t.total, 0);
   
   const thisMonthExpenses = expenseTransactions
-    .filter(t => t.date >= thisMonth)
+    .filter(t => {
+      try {
+        const transactionDate = new Date(t.date);
+        return !isNaN(transactionDate.getTime()) && transactionDate >= thisMonth;
+      } catch {
+        return false;
+      }
+    })
     .reduce((sum, t) => sum + t.total, 0);
 
   const lastMonthIncome = incomeTransactions
-    .filter(t => t.date >= lastMonth && t.date <= lastMonthEnd)
+    .filter(t => {
+      try {
+        const transactionDate = new Date(t.date);
+        return !isNaN(transactionDate.getTime()) && 
+               transactionDate >= lastMonth && 
+               transactionDate <= lastMonthEnd;
+      } catch {
+        return false;
+      }
+    })
     .reduce((sum, t) => sum + t.total, 0);
 
   const totalIncome = incomeTransactions.reduce((sum, t) => sum + t.total, 0);
@@ -59,6 +82,17 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
       const student = students.find(s => s.id === id);
       return student ? `${student.firstName} ${student.lastName}` : 'Unknown';
     });
+  };
+
+  const formatDate = (date: Date | string) => {
+    try {
+      const dateObj = new Date(date);
+      if (isNaN(dateObj.getTime())) return 'Invalid Date';
+      return dateObj.toLocaleDateString();
+    } catch (error) {
+      console.warn('Error formatting date:', date);
+      return 'Invalid Date';
+    }
   };
 
   const kpiCards = [
@@ -189,7 +223,7 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
                     {getStudentNames(transaction.studentIds).join(', ')}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {transaction.loggedUser} - {transaction.date.toLocaleDateString()}
+                    {transaction.loggedUser} - {formatDate(transaction.date)}
                   </p>
                 </div>
                 <div className="text-right">

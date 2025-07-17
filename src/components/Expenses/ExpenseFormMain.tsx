@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Trash2, Upload } from 'lucide-react';
+import { ImageUpload } from '@/components/ui/image-upload';
+import { Plus, Trash2 } from 'lucide-react';
 import { ExpenseItem, ExpenseTransaction, CostCenter } from '@/types';
 
 interface ExpenseFormMainProps {
@@ -17,7 +18,6 @@ export default function ExpenseFormMain({ costCenters, onSave }: ExpenseFormMain
   const [items, setItems] = useState<ExpenseItem[]>([]);
   const [description, setDescription] = useState('');
   const [receiptImage, setReceiptImage] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
 
   const addItem = () => {
     const newItem: ExpenseItem = {
@@ -40,17 +40,12 @@ export default function ExpenseFormMain({ costCenters, onSave }: ExpenseFormMain
     setItems(items.filter(item => item.id !== id));
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setUploading(true);
-      const reader = new FileReader();
-      reader.onload = () => {
-        setReceiptImage(reader.result as string);
-        setUploading(false);
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleImageUpload = (imageUrl: string) => {
+    setReceiptImage(imageUrl);
+  };
+
+  const handleImageRemove = () => {
+    setReceiptImage(null);
   };
 
   const handleSubmit = () => {
@@ -90,22 +85,12 @@ export default function ExpenseFormMain({ costCenters, onSave }: ExpenseFormMain
         </div>
 
         <div>
-          <Label>Receipt Image</Label>
-          <div className="flex items-center space-x-2">
-            <Input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              disabled={uploading}
-            />
-            <Button type="button" variant="outline" size="sm" disabled={uploading}>
-              <Upload className="w-4 h-4 mr-2" />
-              {uploading ? 'Uploading...' : 'Upload'}
-            </Button>
-          </div>
-          {receiptImage && (
-            <img src={receiptImage} alt="Receipt" className="mt-2 max-w-xs rounded" />
-          )}
+          <ImageUpload
+            onImageUpload={handleImageUpload}
+            onImageRemove={handleImageRemove}
+            currentImage={receiptImage || undefined}
+            label="Upload Receipt Image"
+          />
         </div>
 
         <div>

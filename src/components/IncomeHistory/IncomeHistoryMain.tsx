@@ -16,7 +16,9 @@ import {
   ArrowDown,
   Calendar,
   User,
-  DollarSign
+  DollarSign,
+  Image as ImageIcon,
+  ZoomIn
 } from 'lucide-react';
 import { IncomeTransaction, Parent, Student, IncomeItem } from '@/types';
 import { format } from 'date-fns';
@@ -331,6 +333,12 @@ export const IncomeHistoryMain: React.FC<IncomeHistoryMainProps> = ({
                       {getSortIcon('status')}
                     </div>
                   </TableHead>
+                  <TableHead>
+                    <div className="flex items-center space-x-1">
+                      <ImageIcon className="h-4 w-4" />
+                      <span>Receipt</span>
+                    </div>
+                  </TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -375,6 +383,42 @@ export const IncomeHistoryMain: React.FC<IncomeHistoryMainProps> = ({
                       >
                         {transaction.status === 'paid' ? 'Paid' : 'Pending'}
                       </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {transaction.receiptImage ? (
+                        <div className="flex items-center space-x-2">
+                          <img 
+                            src={transaction.receiptImage} 
+                            alt="Receipt thumbnail" 
+                            className="h-8 w-8 object-cover rounded border cursor-pointer hover:opacity-80"
+                            onClick={() => {
+                              const dialog = document.querySelector(`[data-receipt-id="${transaction.id}"] button`);
+                              if (dialog) (dialog as HTMLElement).click();
+                            }}
+                          />
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button variant="outline" size="sm" className="h-8 w-8 p-0" data-receipt-id={transaction.id}>
+                                <ZoomIn className="h-4 w-4" />
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-3xl">
+                              <DialogHeader>
+                                <DialogTitle>Receipt Image</DialogTitle>
+                              </DialogHeader>
+                              <div className="flex justify-center">
+                                <img 
+                                  src={transaction.receiptImage} 
+                                  alt="Receipt" 
+                                  className="max-h-[70vh] max-w-full object-contain rounded-lg border"
+                                />
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground text-sm">No receipt</span>
+                      )}
                     </TableCell>
                     <TableCell>
                       <Dialog>
@@ -450,6 +494,18 @@ export const IncomeHistoryMain: React.FC<IncomeHistoryMainProps> = ({
                                   {format(new Date(selectedTransaction.createdAt), 'PPP pp')}
                                 </p>
                               </div>
+                              {selectedTransaction.receiptImage && (
+                                <div>
+                                  <label className="text-sm font-medium">Receipt Image</label>
+                                  <div className="mt-2 p-4 bg-muted rounded-lg">
+                                    <img 
+                                      src={selectedTransaction.receiptImage} 
+                                      alt="Receipt" 
+                                      className="max-h-64 max-w-full object-contain rounded border mx-auto block"
+                                    />
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           )}
                         </DialogContent>

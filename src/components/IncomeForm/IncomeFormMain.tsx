@@ -5,10 +5,9 @@ import { StudentSelector } from './StudentSelector';
 import { ItemSelector } from './ItemSelector';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { ImageUpload } from '@/components/ui/image-upload';
 import { toast } from '@/components/ui/use-toast';
-import { Save, Upload } from 'lucide-react';
+import { Save } from 'lucide-react';
 
 interface IncomeFormMainProps {
   parents: Parent[];
@@ -31,7 +30,6 @@ export const IncomeFormMain: React.FC<IncomeFormMainProps> = ({
   const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
   const [selectedItems, setSelectedItems] = useState<IncomeItem[]>([]);
   const [receiptImage, setReceiptImage] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
 
   const handleParentAdd = (parent: Parent) => {
     onParentAdd(parent);
@@ -66,17 +64,12 @@ export const IncomeFormMain: React.FC<IncomeFormMainProps> = ({
     toast({ title: 'New item created!' });
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setUploading(true);
-      const reader = new FileReader();
-      reader.onload = () => {
-        setReceiptImage(reader.result as string);
-        setUploading(false);
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleImageUpload = (imageUrl: string) => {
+    setReceiptImage(imageUrl);
+  };
+
+  const handleImageRemove = () => {
+    setReceiptImage(null);
   };
 
   const calculateTotal = () => {
@@ -178,30 +171,12 @@ export const IncomeFormMain: React.FC<IncomeFormMainProps> = ({
           <CardTitle>Receipt Upload</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="receipt">Upload Receipt Image</Label>
-              <div className="flex items-center space-x-2">
-                <Input
-                  id="receipt"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  disabled={uploading}
-                />
-                <Button type="button" variant="outline" size="sm" disabled={uploading}>
-                  <Upload className="w-4 h-4 mr-2" />
-                  {uploading ? 'Uploading...' : 'Upload'}
-                </Button>
-              </div>
-            </div>
-            {receiptImage && (
-              <div>
-                <Label>Receipt Preview</Label>
-                <img src={receiptImage} alt="Receipt" className="max-w-xs rounded border" />
-              </div>
-            )}
-          </div>
+          <ImageUpload
+            onImageUpload={handleImageUpload}
+            onImageRemove={handleImageRemove}
+            currentImage={receiptImage || undefined}
+            label="Upload Receipt Image"
+          />
         </CardContent>
       </Card>
 
