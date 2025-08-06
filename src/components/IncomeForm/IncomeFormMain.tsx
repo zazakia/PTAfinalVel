@@ -114,7 +114,7 @@ export const IncomeFormMain: React.FC<IncomeFormMainProps> = ({
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+        <h1 className="text-4xl font-bold text-foreground">
           Income Entry Form
         </h1>
         <p className="text-muted-foreground mt-2">Manage parent and student income transactions</p>
@@ -181,11 +181,11 @@ export const IncomeFormMain: React.FC<IncomeFormMainProps> = ({
       </Card>
 
       {(selectedParent || selectedStudents.length > 0 || selectedItems.length > 0) && (
-        <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200">
+        <Card className="bg-muted/50 border-2 border-primary/20">
           <CardHeader>
             <CardTitle className="text-xl flex justify-between items-center">
               <span>Transaction Summary</span>
-              <span className="text-2xl font-bold text-green-600">${calculateTotal().toFixed(2)}</span>
+              <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">${calculateTotal().toFixed(2)}</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -211,12 +211,12 @@ export const IncomeFormMain: React.FC<IncomeFormMainProps> = ({
                 </div>
               </div>
             </div>
-            <div className="text-sm text-gray-600 mb-4">
+            <div className="text-sm text-muted-foreground mb-4">
               <p>Date: {new Date().toLocaleDateString()}</p>
               <p>Time: {new Date().toLocaleTimeString()}</p>
               <p>Logged User: Current User</p>
             </div>
-            <Button onClick={handleSave} className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+            <Button onClick={handleSave} className="w-full">
               <Save className="h-4 w-4 mr-2" />
               Save Transaction
             </Button>

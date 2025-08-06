@@ -14,35 +14,35 @@ export const DataMain: React.FC<DataMainProps> = ({ onNavigate }) => {
       title: 'Parents/Guardians',
       description: 'Manage parent and guardian information',
       icon: Users,
-      color: 'bg-blue-500'
+      color: 'bg-blue-500 dark:bg-blue-600'
     },
     {
       id: 'data-students',
       title: 'Students',
       description: 'Manage student records and information',
       icon: GraduationCap,
-      color: 'bg-green-500'
+      color: 'bg-green-500 dark:bg-green-600'
     },
     {
       id: 'data-teachers',
       title: 'Teachers & Sections',
       description: 'Manage teachers and class sections',
       icon: UserCheck,
-      color: 'bg-purple-500'
+      color: 'bg-purple-500 dark:bg-purple-600'
     },
     {
       id: 'data-items',
       title: 'Items',
       description: 'Manage fee items and pricing',
       icon: Package,
-      color: 'bg-orange-500'
+      color: 'bg-orange-500 dark:bg-orange-600'
     },
     {
       id: 'data-users',
       title: 'Users & Roles',
       description: 'Manage system users and permissions',
       icon: Settings,
-      color: 'bg-red-500'
+      color: 'bg-red-500 dark:bg-red-600'
     }
   ];
 
@@ -50,7 +50,7 @@ export const DataMain: React.FC<DataMainProps> = ({ onNavigate }) => {
     <div className="p-4 lg:p-6">
       <div className="mb-6">
         <div className="flex items-center space-x-3 mb-2">
-          <div className="p-2 rounded-lg bg-slate-500 text-white">
+          <div className="p-2 rounded-lg bg-slate-500 dark:bg-slate-600 text-white">
             <Database className="h-6 w-6" />
           </div>
           <h1 className="text-2xl lg:text-3xl font-bold">Data Management</h1>

@@ -466,7 +466,7 @@ function App() {
   };
 
   return (
-    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+    <ThemeProvider>
       <ResponsiveLayout currentPage={currentPage} onNavigate={setCurrentPage}>
         {renderCurrentPage()}
       </ResponsiveLayout>

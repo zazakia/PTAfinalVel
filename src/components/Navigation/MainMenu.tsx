@@ -14,56 +14,56 @@ export const MainMenu: React.FC<MainMenuProps> = ({ onNavigate }) => {
       title: 'Income Entry',
       description: 'Record new income transactions',
       icon: DollarSign,
-      color: 'bg-green-500'
+      color: 'bg-emerald-500 dark:bg-emerald-600'
     },
     {
       id: 'income-history',
       title: 'Income History',
       description: 'View all income transactions and history',
       icon: History,
-      color: 'bg-indigo-500'
+      color: 'bg-indigo-500 dark:bg-indigo-600'
     },
     {
       id: 'expenses',
       title: 'Expenses',
       description: 'Record expense transactions',
       icon: CreditCard,
-      color: 'bg-red-500'
+      color: 'bg-red-500 dark:bg-red-600'
     },
     {
       id: 'reports',
       title: 'Reports',
       description: 'View income reports and analytics',
       icon: FileText,
-      color: 'bg-blue-500'
+      color: 'bg-blue-500 dark:bg-blue-600'
     },
     {
       id: 'kpi',
       title: 'KPI Dashboard',
       description: 'Key performance indicators',
       icon: BarChart3,
-      color: 'bg-purple-500'
+      color: 'bg-purple-500 dark:bg-purple-600'
     },
     {
       id: 'data',
       title: 'Data Management',
       description: 'Manage master data and settings',
       icon: Database,
-      color: 'bg-slate-500'
+      color: 'bg-slate-500 dark:bg-slate-600'
     },
     {
       id: 'settings',
       title: 'Settings',
       description: 'System configuration',
       icon: Settings,
-      color: 'bg-gray-500'
+      color: 'bg-gray-500 dark:bg-gray-600'
     }
   ];
 
   return (
     <div className="p-4 lg:p-6">
       <div className="mb-6">
-        <h1 className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+        <h1 className="text-2xl lg:text-3xl font-bold text-foreground">
           School Income Management
         </h1>
         <p className="text-muted-foreground mt-2 text-sm lg:text-base">Manage student payments and track income</p>

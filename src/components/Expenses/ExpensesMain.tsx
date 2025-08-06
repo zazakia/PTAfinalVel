@@ -70,7 +70,7 @@ export default function ExpensesMain({
             </CardHeader>
             <CardContent>
               {expenses.length === 0 ? (
-                <p className="text-gray-500">No expenses recorded yet.</p>
+                <p className="text-muted-foreground">No expenses recorded yet.</p>
               ) : (
                 <div className="space-y-4">
                   {expenses.map((expense) => (
@@ -78,8 +78,8 @@ export default function ExpensesMain({
                       <div className="flex justify-between items-start">
                         <div>
                           <h3 className="font-semibold">${expense.total.toFixed(2)}</h3>
-                          <p className="text-sm text-gray-600">{expense.description}</p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-sm text-muted-foreground">{expense.description}</p>
+                          <p className="text-xs text-muted-foreground">
                             {expense.date.toLocaleDateString()} - {expense.loggedUser}
                           </p>
                         </div>
@@ -94,7 +94,7 @@ export default function ExpensesMain({
                       <div className="mt-2">
                         <p className="text-sm font-medium">Items:</p>
                         {expense.items.map((item) => (
-                          <div key={item.id} className="text-sm text-gray-600 ml-2">
+                          <div key={item.id} className="text-sm text-muted-foreground ml-2">
                             {item.name} - ${item.amount.toFixed(2)}
                           </div>
                         ))}
@@ -145,7 +145,7 @@ export default function ExpensesMain({
             </CardHeader>
             <CardContent>
               {costCenters.length === 0 ? (
-                <p className="text-gray-500">No cost centers created yet.</p>
+                <p className="text-muted-foreground">No cost centers created yet.</p>
               ) : (
                 <div className="space-y-2">
                   {costCenters.map((cc) => (
@@ -153,9 +153,9 @@ export default function ExpensesMain({
                       <div className="flex justify-between">
                         <div>
                           <h3 className="font-semibold">{cc.name}</h3>
-                          <p className="text-sm text-gray-600">Code: {cc.code}</p>
+                          <p className="text-sm text-muted-foreground">Code: {cc.code}</p>
                           {cc.description && (
-                            <p className="text-sm text-gray-500">{cc.description}</p>
+                            <p className="text-sm text-muted-foreground">{cc.description}</p>
                           )}
                         </div>
                       </div>

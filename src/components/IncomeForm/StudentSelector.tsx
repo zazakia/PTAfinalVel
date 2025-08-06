@@ -125,7 +125,7 @@ export const StudentSelector: React.FC<StudentSelectorProps> = ({
           </div>
           <div className="max-h-48 overflow-y-auto space-y-2">
             {filteredStudents.map((student, index) => (
-              <div key={student.id} className={`flex items-center space-x-2 p-2 rounded transition-colors ${index % 2 === 0 ? 'bg-blue-50 hover:bg-blue-100' : 'bg-white hover:bg-blue-50'} border-blue-200 border`}>
+              <div key={student.id} className={`flex items-center space-x-2 p-2 rounded transition-colors ${index % 2 === 0 ? 'bg-secondary hover:bg-secondary/80' : 'bg-background hover:bg-secondary'} border`}>
                 <Checkbox
                   checked={selectedStudents.some(s => s.id === student.id)}
                   onCheckedChange={() => onStudentToggle(student)}
@@ -142,14 +142,14 @@ export const StudentSelector: React.FC<StudentSelectorProps> = ({
       )}
       
       {selectedStudents.length > 0 && (
-        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
-          <CardHeader className="bg-blue-100/50">
-            <CardTitle className="text-sm text-blue-800">Selected Students</CardTitle>
+        <Card className="bg-muted/50 border-primary/20">
+          <CardHeader className="bg-muted/30">
+            <CardTitle className="text-sm text-primary">Selected Students</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               {selectedStudents.map((student, index) => (
-                <div key={student.id} className={`flex items-center justify-between p-2 rounded ${index % 2 === 0 ? 'bg-blue-100' : 'bg-white'}`}>
+                <div key={student.id} className={`flex items-center justify-between p-2 rounded ${index % 2 === 0 ? 'bg-secondary/50' : 'bg-background'}`}>
                   <span>{student.firstName} {student.lastName}</span>
                   <Button variant="ghost" size="sm" onClick={() => removeStudent(student)}>
                     <X className="h-4 w-4" />
