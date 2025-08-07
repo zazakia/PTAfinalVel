@@ -25,7 +25,7 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
   currentPageTitle 
 }) => {
   return (
-    <header className="lg:hidden bg-background shadow-sm border-b px-4 py-3 flex items-center justify-between">
+    <header className="lg:hidden bg-background/95 backdrop-blur-sm shadow-sm border-b px-4 py-3 flex items-center justify-between">
       <div className="flex items-center space-x-3">
         <Button
           variant="ghost"
